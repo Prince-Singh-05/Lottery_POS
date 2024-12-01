@@ -1,0 +1,1 @@
+The aim of this project is to design and develop a comprehensive POS portal for managing lottery ticket sales, tracking unsold tickets, and handling reimbursements for winning tickets. The portal will automate the ticket lifecycle, ensuring transparency and accuracy while reducing manual effort
