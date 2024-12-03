@@ -98,13 +98,13 @@ const processWinningTicket = async (req, res) => {
 
 const getWeeklyReport = async (req, res) => {
   try {
-    const shop = req.user.shop;
+    const shops = req.user.shop; // Array of shop IDs
     const startDate = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
 
     const ticketStats = await Ticket.aggregate([
       {
         $match: {
-          shop: shop._id,
+          shop: { $in: shops },
           $or: [
             { soldAt: { $gte: startDate } },
             { claimedAt: { $gte: startDate } }
@@ -116,7 +116,10 @@ const getWeeklyReport = async (req, res) => {
           byStatus: [
             {
               $group: {
-                _id: "$status",
+                _id: {
+                  status: "$status",
+                  shop: "$shop"
+                },
                 count: { $sum: 1 },
                 totalAmount: {
                   $sum: {
@@ -127,6 +130,20 @@ const getWeeklyReport = async (req, res) => {
                     ]
                   }
                 }
+              }
+            },
+            {
+              $group: {
+                _id: "$_id.status",
+                shops: {
+                  $push: {
+                    shop: "$_id.shop",
+                    count: "$count",
+                    totalAmount: "$totalAmount"
+                  }
+                },
+                totalCount: { $sum: "$count" },
+                totalAmount: { $sum: "$totalAmount" }
               }
             }
           ],
@@ -139,7 +156,7 @@ const getWeeklyReport = async (req, res) => {
             },
             {
               $group: {
-                _id: null,
+                _id: "$shop",
                 totalClaimed: { $sum: 1 },
                 totalWinningAmount: { $sum: "$winningAmount" },
                 claimedTickets: {
@@ -151,26 +168,69 @@ const getWeeklyReport = async (req, res) => {
                   }
                 }
               }
+            },
+            {
+              $group: {
+                _id: null,
+                shops: {
+                  $push: {
+                    shop: "$_id",
+                    totalClaimed: "$totalClaimed",
+                    totalWinningAmount: "$totalWinningAmount",
+                    claimedTickets: "$claimedTickets"
+                  }
+                },
+                totalClaimed: { $sum: "$totalClaimed" },
+                totalWinningAmount: { $sum: "$totalWinningAmount" }
+              }
+            }
+          ],
+          shopDetails: [
+            {
+              $group: {
+                _id: "$shop",
+                totalTickets: { $sum: 1 },
+                revenue: {
+                  $sum: {
+                    $cond: [
+                      { $or: [
+                        { $eq: ["$status", "sold"] },
+                        { $eq: ["$status", "claimed"] }
+                      ]},
+                      "$price",
+                      0
+                    ]
+                  }
+                },
+                payouts: {
+                  $sum: {
+                    $cond: [
+                      { $eq: ["$status", "claimed"] },
+                      "$winningAmount",
+                      0
+                    ]
+                  }
+                }
+              }
             }
           ]
         }
       }
     ]);
 
-	console.log({ticketStats});
-
     // Prepare the response data
     const stats = ticketStats[0];
     const byStatus = stats.byStatus || [];
     const claimedInfo = stats.claimedDetails[0] || {
+      shops: [],
       totalClaimed: 0,
-      totalWinningAmount: 0,
-      claimedTickets: []
+      totalWinningAmount: 0
     };
+    const shopStats = stats.shopDetails || [];
 
-    // calculate summary
-    const totalRevenue = calculateTotalRevenue(byStatus);
-    const totalPayouts = calculateTotalPayouts(byStatus);
+    // Calculate overall summary
+	const totalRevenue = calculateTotalRevenue(shopStats);
+	const totalPayouts = calculateTotalPayouts(shopStats);
     const netProfit = totalRevenue - totalPayouts;
 
     const report = {
@@ -187,8 +247,15 @@ const getWeeklyReport = async (req, res) => {
       claimedTickets: {
         total: claimedInfo.totalClaimed,
         totalAmount: claimedInfo.totalWinningAmount,
-        details: claimedInfo.claimedTickets
-      }
+        byShop: claimedInfo.shops
+      },
+      shopStats: shopStats.map(shop => ({
+        shopId: shop._id,
+        totalTickets: shop.totalTickets,
+        revenue: shop.revenue,
+        payouts: shop.payouts,
+        netProfit: shop.revenue - shop.payouts
+      }))
     };
 
     res.status(200).json(report);
