@@ -14,7 +14,7 @@ const app = express();
 const allowedOrigins = [
   process.env.CLIENT_URL,
   "http://localhost:5173",
-  "https://lottery-management.vercel.app",
+  "https://lottery-pos.vercel.app",
 ];
 
 app.use(cookieParser());
