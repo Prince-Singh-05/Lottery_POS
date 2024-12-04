@@ -12,9 +12,12 @@ const useTicketStore = create((set) => ({
   fetchTickets: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get("http://localhost:4000/api/ticket", {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/ticket`,
+        {
+          withCredentials: true,
+        }
+      );
       set({ tickets: response.data, loading: false });
       localStorage.setItem("tickets", JSON.stringify(response.data));
     } catch (error) {
@@ -30,7 +33,7 @@ const useTicketStore = create((set) => ({
     set({ loading: true });
     try {
       const response = await axios.get(
-        `http://localhost:4000/api/shop/${shopId}`,
+        `${import.meta.env.VITE_API_URL}/api/shop/${shopId}`,
         { withCredentials: true }
       );
       set({ tickets: response.data, loading: false, error: null });
@@ -48,7 +51,7 @@ const useTicketStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/ticket/buy",
+        `${import.meta.env.VITE_API_URL}/api/ticket/buy`,
         ticketData,
         { withCredentials: true }
       );
@@ -75,7 +78,7 @@ const useTicketStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await axios.get(
-        `http://localhost:4000/api/ticket/claim/${ticketId}`,
+        `${import.meta.env.VITE_API_URL}/api/ticket/claim/${ticketId}`,
         { withCredentials: true }
       );
       set((state) => ({

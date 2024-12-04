@@ -1,8 +1,10 @@
-import { create } from 'zustand';
-import axios from 'axios';
+import { create } from "zustand";
+import axios from "axios";
 
 const useUserStore = create((set) => ({
-  user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null,
+  user: localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null,
   loading: false,
   error: null,
 
@@ -10,19 +12,26 @@ const useUserStore = create((set) => ({
   login: async (credentials) => {
     set({ loading: true });
     try {
-      const response = await axios.post('http://localhost:4000/api/user/login', credentials, {withCredentials: true});
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/user/login`,
+        credentials,
+        { withCredentials: true }
+      );
       const userData = response.data;
-      
+
       // Ensure role is set
-      if (!['admin', 'shop_owner', 'customer'].includes(userData.role)) {
-        throw new Error('Invalid user role');
+      if (!["admin", "shop_owner", "customer"].includes(userData.role)) {
+        throw new Error("Invalid user role");
       }
-      
+
       set({ user: userData, loading: false, error: null });
-      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem("user", JSON.stringify(userData));
       return userData;
     } catch (error) {
-      set({ error: error.response?.data?.message || error.message, loading: false });
+      set({
+        error: error.response?.data?.message || error.message,
+        loading: false,
+      });
       throw error;
     }
   },
@@ -31,16 +40,23 @@ const useUserStore = create((set) => ({
   register: async (userData) => {
     set({ loading: true });
     try {
-      if (!['admin', 'shop_owner', 'customer'].includes(userData.role)) {
-        throw new Error('Invalid user role');
+      if (!["admin", "shop_owner", "customer"].includes(userData.role)) {
+        throw new Error("Invalid user role");
       }
 
-      const response = await axios.post('http://localhost:4000/api/user/signup', userData, {withCredentials: true});
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/user/signup`,
+        userData,
+        { withCredentials: true }
+      );
       set({ user: response.data, loading: false, error: null });
-      localStorage.setItem('user', JSON.stringify(response.data));
+      localStorage.setItem("user", JSON.stringify(response.data));
       return response.data;
     } catch (error) {
-      set({ error: error.response?.data?.message || error.message, loading: false });
+      set({
+        error: error.response?.data?.message || error.message,
+        loading: false,
+      });
       throw error;
     }
   },
@@ -48,7 +64,7 @@ const useUserStore = create((set) => ({
   // Logout user
   logout: () => {
     set({ user: null, error: null });
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
   },
 
   // Check if user has specific role
@@ -58,7 +74,7 @@ const useUserStore = create((set) => ({
   },
 
   // Clear error
-  clearError: () => set({ error: null })
+  clearError: () => set({ error: null }),
 }));
 
 export default useUserStore;

@@ -9,9 +9,10 @@ const useReportStore = create((set) => ({
   fetchWeeklyReport: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get("http://localhost:4000/api/ticket/weeklyReport", {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/ticket/weeklyReport`,
+        { withCredentials: true }
+      );
       set({ weeklyReport: response.data, loading: false });
     } catch (error) {
       set({

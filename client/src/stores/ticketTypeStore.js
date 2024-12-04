@@ -14,7 +14,7 @@ const useTicketTypeStore = create((set, get) => ({
     set({ loading: true });
     try {
       const response = await axios.get(
-        "http://localhost:4000/api/ticket/ticket-types",
+        `${import.meta.env.VITE_API_URL}/api/ticket/ticket-types`,
         { withCredentials: true }
       );
       set({ ticketTypes: response.data, loading: false, error: null });
@@ -35,7 +35,7 @@ const useTicketTypeStore = create((set, get) => ({
       }
 
       const response = await axios.post(
-        "http://localhost:4000/api/ticket/createTicketType",
+        `${import.meta.env.VITE_API_URL}/api/ticket/createTicketType`,
         ticketTypeData,
         { withCredentials: true }
       );
@@ -59,7 +59,7 @@ const useTicketTypeStore = create((set, get) => ({
     set({ loading: true });
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/ticket/allocateTickets",
+        `${import.meta.env.VITE_API_URL}/api/ticket/allocateTickets`,
         allocation,
         { withCredentials: true }
       );
@@ -79,7 +79,7 @@ const useTicketTypeStore = create((set, get) => ({
     set({ loading: true });
     try {
       const response = await axios.get(
-        `http://localhost:4000/api/ticket-types/shop/${shopId}`,
+        `${import.meta.env.VITE_API_URL}/api/ticket-types/shop/${shopId}`,
         { withCredentials: true }
       );
       return response.data;

@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import axios from 'axios';
+import { create } from "zustand";
+import axios from "axios";
 
 const useShopStore = create((set) => ({
   shops: [],
@@ -10,12 +10,18 @@ const useShopStore = create((set) => ({
   fetchAllShops: async () => {
     set({ loading: true });
     try {
-      const response = await axios.get('http://localhost:4000/api/shop', {
-        withCredentials: true
-      });
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/shop`,
+        {
+          withCredentials: true,
+        }
+      );
       set({ shops: response.data, loading: false, error: null });
     } catch (error) {
-      set({ error: error.response?.data?.message || error.message, loading: false });
+      set({
+        error: error.response?.data?.message || error.message,
+        loading: false,
+      });
     }
   },
 
@@ -23,12 +29,18 @@ const useShopStore = create((set) => ({
   fetchMyShops: async () => {
     set({ loading: true });
     try {
-      const response = await axios.get('http://localhost:4000/api/shop/my-shops', {
-        withCredentials: true
-      });
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/shop/my-shops`,
+        {
+          withCredentials: true,
+        }
+      );
       set({ shops: response.data, loading: false, error: null });
     } catch (error) {
-      set({ error: error.response?.data?.message || error.message, loading: false });
+      set({
+        error: error.response?.data?.message || error.message,
+        loading: false,
+      });
     }
   },
 
@@ -36,23 +48,30 @@ const useShopStore = create((set) => ({
   registerShop: async (shopData) => {
     set({ loading: true });
     try {
-      const response = await axios.post('http://localhost:4000/api/shop/register', shopData, {
-        withCredentials: true
-      });
-      set(state => ({
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/shop/register`,
+        shopData,
+        {
+          withCredentials: true,
+        }
+      );
+      set((state) => ({
         shops: [...state.shops, response.data],
         loading: false,
-        error: null
+        error: null,
       }));
       return response.data;
     } catch (error) {
-      set({ error: error.response?.data?.message || error.message, loading: false });
+      set({
+        error: error.response?.data?.message || error.message,
+        loading: false,
+      });
       throw error;
     }
   },
 
   // Clear error
-  clearError: () => set({ error: null })
+  clearError: () => set({ error: null }),
 }));
 
 export default useShopStore;
