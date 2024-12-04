@@ -19,18 +19,11 @@ const allowedOrigins = [
 
 app.use(cookieParser());
 app.use(express.json());
+
+// CORS configuration
 app.use(cors({
-  credentials: true,
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
+  origin: allowedOrigins,
+  credentials: true
 }));
 
 // Connect to MongoDB
