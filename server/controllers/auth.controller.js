@@ -26,7 +26,14 @@ const signup = async (req, res) => {
 			password: hashedPassword,
 		});
 
-		res.status(201).json({
+		const token = jwt.sign({ _id: newUser._id }, process.env.JWT_SECRET);
+
+		res.cookie("token", token, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+			maxAge: 3 * 24 * 60 * 60 * 1000,
+		}).status(201).json({
 			_id: newUser._id,
 			name: newUser.name,
 			email: newUser.email,
@@ -59,16 +66,20 @@ const login = async (req, res) => {
 
 		const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
 
-		res.cookie("token", token, { maxAge: 3 * 24 * 60 * 60 * 1000 })
-			.status(201)
-			.json({
-				_id: user._id,
-				name: user.name,
-				email: user.email,
-				role: user.role,
-				token,
-			});
-	} catch (error) {}
+		res.cookie("token", token, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+			maxAge: 3 * 24 * 60 * 60 * 1000,
+		}).status(200).json({
+			_id: user._id,
+			name: user.name,
+			email: user.email,
+			role: user.role,
+		});
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
 };
 
 export { signup, login };
