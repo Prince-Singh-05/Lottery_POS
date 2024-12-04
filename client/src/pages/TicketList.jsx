@@ -6,8 +6,7 @@ import { Button } from "../components/ui/button";
 
 const TicketList = () => {
   const navigate = useNavigate();
-  const { tickets, loading, error, fetchTickets, buyTicket } =
-    useTicketStore();
+  const { tickets, loading, error, fetchTickets, buyTicket } = useTicketStore();
   const { user } = useUserStore();
 
   useEffect(() => {
@@ -21,7 +20,7 @@ const TicketList = () => {
   const handlePurchase = async (ticketId) => {
     try {
       await buyTicket({
-        ticketId
+        ticketId,
       });
       // Refresh tickets after purchase
       fetchTickets();
@@ -60,7 +59,7 @@ const TicketList = () => {
                   <p className="text-gray-600">{ticket.description}</p>
                 </div>
                 <span className="text-green-600 font-bold">
-                  ${ticket.price}
+                  ₹{ticket.price}
                 </span>
               </div>
 

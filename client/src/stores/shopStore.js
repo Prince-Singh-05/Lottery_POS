@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const useShopStore = create((set) => ({
   shops: [],
@@ -12,9 +13,7 @@ const useShopStore = create((set) => ({
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/shop`,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       set({ shops: response.data, loading: false, error: null });
     } catch (error) {
@@ -22,6 +21,7 @@ const useShopStore = create((set) => ({
         error: error.response?.data?.message || error.message,
         loading: false,
       });
+      toast.error(error.message);
     }
   },
 
@@ -41,6 +41,7 @@ const useShopStore = create((set) => ({
         error: error.response?.data?.message || error.message,
         loading: false,
       });
+      toast.error(error.message);
     }
   },
 
@@ -60,8 +61,10 @@ const useShopStore = create((set) => ({
         loading: false,
         error: null,
       }));
+      toast.success("Shop registered successfully");
       return response.data;
     } catch (error) {
+      toast.error("Failed to register shop");
       set({
         error: error.response?.data?.message || error.message,
         loading: false,

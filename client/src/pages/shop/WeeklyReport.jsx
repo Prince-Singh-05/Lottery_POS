@@ -44,7 +44,7 @@ const WeeklyReport = () => {
           </CardHeader>
           <CardContent>
             <p className="text-xl font-bold text-green-600">
-              ${weeklyReport.summary.totalRevenue.toFixed(2)}
+              ₹{weeklyReport.summary.totalRevenue.toFixed(2)}
             </p>
           </CardContent>
         </Card>
@@ -56,7 +56,7 @@ const WeeklyReport = () => {
           </CardHeader>
           <CardContent>
             <p className="text-xl font-bold text-red-600">
-              ${weeklyReport.summary.totalPayouts.toFixed(2)}
+              ₹{weeklyReport.summary.totalPayouts.toFixed(2)}
             </p>
           </CardContent>
         </Card>
@@ -68,7 +68,7 @@ const WeeklyReport = () => {
           </CardHeader>
           <CardContent>
             <p className="text-xl font-bold text-blue-600">
-              ${weeklyReport.summary.netProfit.toFixed(2)}
+              ₹{weeklyReport.summary.netProfit.toFixed(2)}
             </p>
           </CardContent>
         </Card>
@@ -94,19 +94,19 @@ const WeeklyReport = () => {
                     <div className="bg-gray-50 p-2 rounded">
                       <p className="text-gray-600">Revenue</p>
                       <p className="font-semibold text-green-600">
-                        ${shop.revenue.toFixed(2)}
+                        ₹{shop.revenue.toFixed(2)}
                       </p>
                     </div>
                     <div className="bg-gray-50 p-2 rounded">
                       <p className="text-gray-600">Payouts</p>
                       <p className="font-semibold text-red-600">
-                        ${shop.payouts.toFixed(2)}
+                        ₹{shop.payouts.toFixed(2)}
                       </p>
                     </div>
                     <div className="bg-gray-50 p-2 rounded">
                       <p className="text-gray-600">Net Profit</p>
                       <p className="font-semibold text-blue-600">
-                        ${shop.netProfit.toFixed(2)}
+                        ₹{shop.netProfit.toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -126,7 +126,7 @@ const WeeklyReport = () => {
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg capitalize">{stat._id}</CardTitle>
                 <CardDescription>
-                  Total: {stat.totalCount} | Amount: $
+                  Total: {stat.totalCount} | Amount: ₹
                   {stat.totalAmount.toFixed(2)}
                 </CardDescription>
               </CardHeader>
@@ -141,7 +141,7 @@ const WeeklyReport = () => {
                       <div className="flex justify-between">
                         <span>Count: {shop.count}</span>
                         <span className="font-medium">
-                          ${shop.totalAmount.toFixed(2)}
+                          ₹{shop.totalAmount.toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -159,8 +159,8 @@ const WeeklyReport = () => {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg">Claims Overview</CardTitle>
-            <CardDescription>
-              Total Claims: {weeklyReport.claimedTickets.total} | Amount: $
+            <CardDescription className="flex">
+              Total Claims: {weeklyReport.claimedTickets.total} | Amount: ₹
               {weeklyReport.claimedTickets.totalAmount.toFixed(2)}
             </CardDescription>
           </CardHeader>
@@ -177,7 +177,7 @@ const WeeklyReport = () => {
                     <div className="bg-gray-50 p-2 rounded text-sm">
                       <p className="text-gray-600">Total Amount</p>
                       <p className="font-medium">
-                        ${shop.totalWinningAmount.toFixed(2)}
+                        ₹{shop.totalWinningAmount.toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -192,7 +192,7 @@ const WeeklyReport = () => {
                             <div className="flex justify-between mb-1">
                               <span>#{ticket.ticketNumber}</span>
                               <span className="font-medium">
-                                ${ticket.winningAmount.toFixed(2)}
+                                ₹{ticket.winningAmount.toFixed(2)}
                               </span>
                             </div>
                             <p className="text-gray-600 text-xs">

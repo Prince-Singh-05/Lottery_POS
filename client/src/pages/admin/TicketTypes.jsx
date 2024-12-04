@@ -381,8 +381,8 @@ const TicketTypes = () => {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-semibold text-green-600">
-                        ${type.price}
+                      <p className="text-lg font-bold text-green-600">
+                      ₹{type.price}
                       </p>
                       <p className="text-sm text-gray-500">
                         Range: {type.numberPattern.startRange} - {type.numberPattern.endRange}

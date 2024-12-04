@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const useUserStore = create((set) => ({
   user: localStorage.getItem("user")
@@ -26,8 +27,10 @@ const useUserStore = create((set) => ({
 
       set({ user: userData, loading: false, error: null });
       localStorage.setItem("user", JSON.stringify(userData));
+      toast.success("Logged in successfully");
       return userData;
     } catch (error) {
+      toast.error("Failed to login");
       set({
         error: error.response?.data?.message || error.message,
         loading: false,
@@ -63,8 +66,15 @@ const useUserStore = create((set) => ({
 
   // Logout user
   logout: () => {
-    set({ user: null, error: null });
-    localStorage.removeItem("user");
+    try {
+      set({ user: null, error: null });
+      localStorage.removeItem("user");
+      toast.success("Logged out successfully");
+    } catch (error) {
+      toast.error(error.message);
+      set({ error: error.message });
+      throw error;
+    }
   },
 
   // Check if user has specific role

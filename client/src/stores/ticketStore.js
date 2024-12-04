@@ -1,10 +1,12 @@
 import { create } from "zustand";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const useTicketStore = create((set) => ({
   tickets: localStorage.getItem("tickets")
     ? JSON.parse(localStorage.getItem("tickets"))
     : [],
+  customerReport: null,
   loading: false,
   error: null,
 
@@ -25,6 +27,7 @@ const useTicketStore = create((set) => ({
         error: error.response?.data?.message || "Failed to fetch tickets",
         loading: false,
       });
+      toast.error(error.message);
     }
   },
 
@@ -43,6 +46,25 @@ const useTicketStore = create((set) => ({
         error: error.response?.data?.message || error.message,
         loading: false,
       });
+      toast.error(error.message);
+    }
+  },
+
+  // Fetch customer report
+  fetchCustomerReport: async () => {
+    set({ loading: true });
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/user/customerReport`,
+        { withCredentials: true }
+      );
+      set({ customerReport: response.data, loading: false, error: null });
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || "Failed to fetch customer report",
+        loading: false,
+      });
+      toast.error(error.message);
     }
   },
 
@@ -63,13 +85,14 @@ const useTicketStore = create((set) => ({
         ),
         loading: false,
       }));
+      toast.success("Ticket purchased successfully");
       return response.data;
     } catch (error) {
       set({
         error: error.response?.data?.message || "Failed to purchase ticket",
         loading: false,
       });
-      throw error;
+      toast.error(error.message);
     }
   },
 
@@ -87,13 +110,14 @@ const useTicketStore = create((set) => ({
         ),
         loading: false,
       }));
+      toast.success("Ticket claimed successfully");
       return response.data;
     } catch (error) {
       set({
         error: error.response?.data?.message || "Failed to claim ticket",
         loading: false,
       });
-      throw error;
+      toast.error(error.message);
     }
   },
 

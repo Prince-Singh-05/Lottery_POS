@@ -10,16 +10,25 @@ import {
 import useTicketStore from "../stores/ticketStore";
 import useUserStore from "../stores/userStore";
 import { Button } from "../components/ui/button";
-import useReportStore from "../stores/reportStore";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useUserStore();
-  const { tickets, loading, error, fetchTickets } = useTicketStore();
+  const {
+    fetchTickets,
+    fetchCustomerReport,
+    customerReport,
+    loading,
+    tickets,
+    error,
+  } = useTicketStore();
 
   useEffect(() => {
+    if (user.role === "customer") {
+      fetchCustomerReport();
+    }
     fetchTickets();
-  }, []);
+  }, [user.role]);
 
   const navigateToTickets = () => {
     if (user.role === "customer") {
@@ -63,9 +72,7 @@ const Dashboard = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4"
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
             <Button
               onClick={navigateToTickets}
               className="w-full"
@@ -77,6 +84,16 @@ const Dashboard = () => {
                 ? "View My Tickets"
                 : "Manage Tickets"}
             </Button>
+
+            {user.role === "customer" && (
+              <Button
+                onClick={() => navigate("/tickets/claim")}
+                className="w-full"
+                variant="outline"
+              >
+                Claim Tickets
+              </Button>
+            )}
 
             {user.role === "admin" && (
               <Button
@@ -109,6 +126,64 @@ const Dashboard = () => {
           </div>
         </CardContent>
       </Card>
+
+      {user.role === "customer" && customerReport && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Total Tickets</CardTitle>
+              <CardDescription>Purchased tickets</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">
+                {customerReport.totalTicketsPurchased}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Claimed Tickets</CardTitle>
+              <CardDescription>Successfully claimed</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">
+                {customerReport.totalTicketsClaimed}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Total Spent</CardTitle>
+              <CardDescription>Amount spent on tickets</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">
+              ₹{customerReport.totalPurchaseAmount}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Total Won</CardTitle>
+              <CardDescription>Amount won from tickets</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p
+                className={`text-3xl font-bold ${
+                  customerReport.netAmount >= 0
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
+                ₹{customerReport.totalWinningAmount}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

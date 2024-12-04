@@ -9,6 +9,7 @@ import WeeklyReport from "./pages/shop/WeeklyReport";
 import useUserStore from "./stores/userStore";
 import { Button } from "./components/ui/button";
 import { Menu, X } from "lucide-react";
+import ClaimTickets from "./pages/customer/ClaimTickets";
 
 const RoleBasedRoute = ({ children, allowedRoles }) => {
   const { user } = useUserStore();
@@ -106,6 +107,7 @@ const App = () => {
         </>
       )}
       {user.role === "customer" && (
+        <>
         <NavLink
           to="/tickets"
           className={({ isActive }) =>
@@ -117,6 +119,18 @@ const App = () => {
         >
           Buy Tickets
         </NavLink>
+        <NavLink
+          to="/tickets/claim"
+          className={({ isActive }) =>
+            `text-gray-600 hover:text-gray-900 ${
+              isActive ? "font-semibold text-gray-900" : ""
+            }`
+          }
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Claim Tickets
+        </NavLink>
+        </>
       )}
     </>
   );
@@ -207,6 +221,15 @@ const App = () => {
             element={
               <RoleBasedRoute allowedRoles={["customer"]}>
                 <TicketList />
+              </RoleBasedRoute>
+            }
+          />
+
+          <Route
+            path="/tickets/claim"
+            element={
+              <RoleBasedRoute allowedRoles={["customer"]}>
+                <ClaimTickets />
               </RoleBasedRoute>
             }
           />

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const TICKET_TYPES = ["Daily Draws", "Weekly Draws", "Monthly Draws"];
 
@@ -44,13 +45,14 @@ const useTicketTypeStore = create((set, get) => ({
         loading: false,
         error: null,
       }));
+      toast.success("Ticket type created successfully");
       return response.data;
     } catch (error) {
       set({
         error: error.response?.data?.message || error.message,
         loading: false,
       });
-      throw error;
+      toast.error(error.response?.data?.message);
     }
   },
 
@@ -64,13 +66,14 @@ const useTicketTypeStore = create((set, get) => ({
         { withCredentials: true }
       );
       set({ loading: false, error: null });
+      toast.success("Tickets allocated successfully");
       return response.data;
     } catch (error) {
       set({
         error: error.response?.data?.message || error.message,
         loading: false,
       });
-      throw error;
+      toast.error(error.message);
     }
   },
 
@@ -88,7 +91,7 @@ const useTicketTypeStore = create((set, get) => ({
         error: error.response?.data?.message || error.message,
         loading: false,
       });
-      throw error;
+      toast.error(error.message);
     }
   },
 

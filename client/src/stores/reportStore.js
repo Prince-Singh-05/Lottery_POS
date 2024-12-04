@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const useReportStore = create((set) => ({
   weeklyReport: null,
@@ -19,6 +20,7 @@ const useReportStore = create((set) => ({
         error: error.response?.data?.message || "Failed to fetch weekly report",
         loading: false,
       });
+      toast.error(error.message);
     }
   },
 
