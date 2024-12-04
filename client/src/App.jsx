@@ -136,7 +136,7 @@ const App = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       {user && (
         <nav className="bg-white shadow-sm w-full sticky top-0 z-50">
           <div className="container mx-auto px-4 py-3">
