@@ -265,6 +265,63 @@ const getWeeklyReport = async (req, res) => {
   }
 };
 
+const getCustomerReport = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // Get all tickets purchased by the customer
+    const purchasedTickets = await Ticket.find({ 
+      soldTo: userId 
+    }).populate('ticketType');
+
+    // Get all claimed tickets by the customer
+    const claimedTickets = purchasedTickets.filter(ticket => 
+      ticket.status === 'claimed'
+    );
+
+    // Calculate total purchase amount
+    const totalPurchaseAmount = purchasedTickets.reduce((total, ticket) => 
+      total + ticket.ticketType.price, 0
+    );
+
+    // Calculate total winning amount
+    const totalWinningAmount = claimedTickets.reduce((total, ticket) => 
+      total + ticket.winningAmount, 0
+    );
+
+    const report = {
+      totalTicketsPurchased: purchasedTickets.length,
+      totalTicketsClaimed: claimedTickets.length,
+      totalPurchaseAmount,
+      totalWinningAmount,
+      netAmount: totalWinningAmount - totalPurchaseAmount,
+      tickets: {
+        purchased: purchasedTickets.map(ticket => ({
+          ticketNumber: ticket.ticketNumber,
+          purchaseDate: ticket.soldAt,
+          price: ticket.ticketType.price,
+          status: ticket.status,
+          type: ticket.ticketType.name
+        })),
+        claimed: claimedTickets.map(ticket => ({
+          ticketNumber: ticket.ticketNumber,
+          claimDate: ticket.claimedAt,
+          winningAmount: ticket.winningAmount,
+          type: ticket.ticketType.name
+        }))
+      }
+    };
+
+    res.status(200).json(report);
+  } catch (error) {
+    console.error('Error in getCustomerReport:', error);
+    res.status(500).json({ 
+      message: "Failed to generate customer report",
+      error: error.message 
+    });
+  }
+};
+
 const getShopTickets = async (req, res) => {
   try {
     const { shopId } = req.params;
@@ -295,4 +352,5 @@ export {
   getWeeklyReport,
   getShopTickets,
   getAllTickets,
+  getCustomerReport,
 };
